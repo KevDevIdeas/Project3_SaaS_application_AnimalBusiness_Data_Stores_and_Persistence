@@ -59,7 +59,7 @@ public class UserController {
         //get Pet from the petId provided
         Pet pet = petService.getPetById(petId);
 
-        //retrieve th customer and return within the DTO
+        //retrieve the customer and return within the DTO
         Customer owner = pet.getOwner();
 
         return convertCustomerToDTO(owner);
@@ -96,12 +96,12 @@ public class UserController {
 
     private static CustomerDTO convertCustomerToDTO (Customer customer){
         CustomerDTO customerDTO = new CustomerDTO();
+        BeanUtils.copyProperties(customer, customerDTO);
         customerDTO.setNotes(customer.getNotes());
         if (customer.getPets() != null) {
             customerDTO.setPetIds(customer.getPets().stream().map(pet -> pet.getId()).collect(Collectors.toList()));
         }
 
-        BeanUtils.copyProperties(customer, customerDTO);
         return customerDTO;
     }
 
