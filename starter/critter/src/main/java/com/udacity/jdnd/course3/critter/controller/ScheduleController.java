@@ -39,7 +39,7 @@ public class ScheduleController {
 
     @PostMapping
     public ScheduleDTO createSchedule(@RequestBody ScheduleDTO scheduleDTO) {
-        Schedule savedSchedule = scheduleService.saveSchedule(convertDTOToSchedule(scheduleDTO));
+        Schedule savedSchedule = scheduleService.saveSchedule(convertDTOToSchedule(scheduleDTO, employeeService, petService));
         return convertScheduleToDTO(savedSchedule);
     }
 
@@ -106,7 +106,7 @@ public class ScheduleController {
         return scheduleDTO;
     }
 
-    private static Schedule convertDTOToSchedule (ScheduleDTO scheduleDTO) {
+    private static Schedule convertDTOToSchedule (ScheduleDTO scheduleDTO, EmployeeService employeeService, PetService petService ) {
         Schedule schedule = new Schedule();
         // will not set the employeeIds, petIds into the employees and pets
         //because in the entity the fields are nested in the object lists employees and pets and hence no 1to1 mapping from naming
@@ -118,14 +118,11 @@ public class ScheduleController {
         List<Long> employeesId = new ArrayList<>(scheduleDTO.getEmployeeIds());
 
         // since the employees list ist still empty - the employeesId list has to be looped trhough
-        //Next for each employeeId an empty employee object is created and added to the employees List.
-        //thirdly, the Id form the employeesId is set in the list of employee object called employees
+        //Next for each employeeId the employee is fetched via the employeeService from the repository
+        //and added to the employees List.
         for (Long employeeId : employeesId) {
-            employees.add(new Employee());
+            employees.add(employeeService.getEmployeeById(employeeId));
 
-            for (Employee employee : employees) {
-                employee.setId(employeeId);
-            }
         }
         schedule.setEmployees(employees);
 
@@ -133,11 +130,7 @@ public class ScheduleController {
         List<Pet> pets = new ArrayList<>();
         List<Long> petsId = new ArrayList<>(scheduleDTO.getPetIds());
         for (Long petId : petsId) {
-            pets.add(new Pet());
-
-            for (Pet pet : pets) {
-                pet.setId(petId);
-            }
+            pets.add(petService.getPetById(petId));
         }
         schedule.setPets(pets);
 

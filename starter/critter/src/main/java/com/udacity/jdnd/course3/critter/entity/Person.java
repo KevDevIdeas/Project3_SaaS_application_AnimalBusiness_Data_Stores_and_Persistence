@@ -16,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 
 @Entity
+//polymorphic queries should be allowed but shared fields are not required to be on child classes
 @Inheritance(strategy = InheritanceType.JOINED)
 public abstract class Person {
     @Id
