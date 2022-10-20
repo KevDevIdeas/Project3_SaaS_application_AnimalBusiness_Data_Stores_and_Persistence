@@ -13,7 +13,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @Entity
-public class Customer extends Person{
+public class Customer {
+
+    @Id
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
+
+    @Nationalized
+    private String name;
 
     @Nationalized
     private String phoneNumber;
